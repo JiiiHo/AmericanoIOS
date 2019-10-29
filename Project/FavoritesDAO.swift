@@ -37,8 +37,8 @@ class FavoritesDAO {
             
             for record in resultset {
                 let data = FavoritesData()
-                data.title = record.title
-                data.serial = Int(record.serial)
+                data.name = record.name
+                data.id = Int(record.id)
                 data.count = Int(record.count)
                 data.objectID = record.objectID
                 
@@ -55,8 +55,9 @@ class FavoritesDAO {
     func add(_ data: FavoritesData) {
         let object = NSEntityDescription.insertNewObject(forEntityName: "Favorites", into: self.context) as! FavoritesMO
         
-        object.title = data.title
-        object.serial = Int64(data.serial!)
+        object.name = data.name
+        object.id = Int64(data.id!)
+        object.categoryID = Int64(data.categoryID!)
         object.count = Int64(data.count!)
         
         if let image = data.image {
@@ -81,24 +82,29 @@ class FavoritesDAO {
         }
     }
     
-    func delete(_ serial: Int64) -> Bool {
+    func getObjectID(_ favoritesData: FavoritesData) -> NSManagedObjectID? {
         let fetchRequest: NSFetchRequest<FavoritesMO> = FavoritesMO.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "serial == %d", serial)
-        do {
+        fetchRequest.predicate = NSPredicate(format: "categoryID == %d && id == %d", favoritesData.categoryID!, favoritesData.id!)
+        do{
             let object = try self.context.fetch(fetchRequest).first!
-            self.context.delete(object)
-            do{
-                try self.context.save()
-                return true
-            } catch let e as NSError {
-                NSLog("An error has occurred : %s", e.localizedDescription)
-                return false
-            }
-            
+            return object.objectID
+        } catch let e as NSError {
+            NSLog("An error has occurred : %s", e.localizedDescription)
+            return nil
+        }
+    }
+    
+    // 방문시 count 값 1 증가하는 함수
+    func addCount(_ objectID: NSManagedObjectID) -> Bool {
+        let object = self.context.object(with: objectID)
+        let count = object.value(forKey: "count") as! Int
+        object.setValue(count + 1, forKey: "count")
+        do {
+            try self.context.save()
+            return true
         } catch let e as NSError {
             NSLog("An error has occurred : %s", e.localizedDescription)
             return false
         }
     }
-    
 }

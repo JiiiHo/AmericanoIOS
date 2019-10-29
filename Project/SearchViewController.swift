@@ -9,7 +9,12 @@
 import UIKit
 
 class SearchViewController: UITableViewController {
-    /*
+    
+    lazy var list: [SearchData] = {
+        var datalist = [SearchData]()
+        return datalist
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -18,8 +23,42 @@ class SearchViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        paramText = paramText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let url = "http://13.209.226.113:8080/store/store/search/\(paramText)"
+        let apiURI: URL! = URL(string: url)
+        
+        let apidata = try! Data(contentsOf: apiURI)
+        
+        let log = NSString(data: apidata, encoding: String.Encoding.utf8.rawValue) ?? ""
+        NSLog("API Result=\(log)")
+        
+        do{
+            let apiDictionary = try JSONSerialization.jsonObject(with: apidata, options: []) as! NSDictionary
+            guard apiDictionary["success"] as! Bool == true else {
+                return
+            }
+            let store = apiDictionary["list"] as! NSArray
+            
+            for row in store {
+                let r = row as! NSDictionary
+                let mvo = SearchData()
+                mvo.latitude = r["latitude"] as? Double
+                mvo.longitude = r["longitude"] as? Double
+                mvo.name = r["name"] as? String
+                mvo.seatCount = r["seatCount"] as? Int
+                mvo.totalCount = r["totalCount"] as? Int
+                mvo.pictureURL = r["pictureURL"] as? String
+                mvo.id = r["id"] as? Int
+                self.list.append(mvo)
+            }
+        }catch {
+            
+        }
     }
-     */
+     
+    
+    @IBOutlet var searchTextField: UITextField!
+    var paramText: String = ""
     // MARK: - Table view data source
     override func viewWillAppear(_ animated: Bool) {
         self.tableView.reloadData()
@@ -31,17 +70,27 @@ class SearchViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 5
+        return self.list.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let row = self.list[indexPath.row]
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "SearchCell", for: indexPath) as! SearchCell
-        cell.title.text = "홍대스타벅스"
-        cell.distance.text = "33m"
+        cell.title.text = row.name
+        cell.distance.text = "\(33)m"
         cell.state.text = "원할"
         // Configure the cell...
 
         return cell
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "DetailSegue" {
+            let path = self.tableView.indexPath(for: sender as! SearchCell)
+            let detailVC = segue.destination as? DetailViewController
+            detailVC?.paramID = self.list[path!.row].id
+        }
     }
 
     /*

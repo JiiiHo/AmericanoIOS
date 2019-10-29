@@ -1,18 +1,22 @@
 //
-//  HistoryViewController.swift
+//  FavoritesViewController.swift
 //  Project
 //
-//  Created by 신지호 on 07/08/2019.
+//  Created by 신지호 on 02/09/2019.
 //  Copyright © 2019 신지호. All rights reserved.
 //
 
 import UIKit
 
-class HistoryViewController: UITableViewController {
-    
+class FavoritesViewController: UITableViewController {
     lazy var dao = FavoritesDAO()
-    /*
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    func initUI() {
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
+        self.tableView.allowsSelectionDuringEditing = true
+    }
     override func viewDidLoad() {
+        self.initUI()
         super.viewDidLoad()
 
         // Uncomment the following line to preserve selection between presentations
@@ -21,42 +25,37 @@ class HistoryViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-     */
-    @IBOutlet var searchTextField: UITextField!
-    @IBAction func onSearch(_ sender: UIBarButtonItem) {
-        self.performSegue(withIdentifier: "SearchSegue", sender: self)
-    }
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let dest = segue.destination
-        guard let rvc = dest as? SearchViewController else {
-            return
-        }
-        
-        rvc.paramText = self.searchTextField.text!
-    }
+
     // MARK: - Table view data source
-    override func viewWillAppear(_ animated: Bool) {
-        self.tableView.reloadData()
-    }
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 5
+        let count = self.appDelegate.favoriteslist.count
+        return count
     }
 
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "HistoryCell", for: indexPath) as! HistoryCell
-        cell.title.text = ""
+        let row = self.appDelegate.favoriteslist[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "FavoritesCell", for: indexPath)
+        cell.textLabel?.text = row.name
         // Configure the cell...
 
         return cell
     }
-    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        let data = self.appDelegate.favoriteslist[indexPath.row]
+        
+        if dao.delete(dao.getObjectID(data)!) {
+            self.appDelegate.favoriteslist.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+        
+    }
 
     /*
     // Override to support conditional editing of the table view.
