@@ -9,7 +9,8 @@
 import UIKit
 
 class SearchViewController: UITableViewController {
-    
+    lazy var dao = FavoritesDAO()
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     lazy var list: [SearchData] = {
         var datalist = [SearchData]()
         return datalist
@@ -24,7 +25,7 @@ class SearchViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         paramText = paramText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-        let url = "http://13.209.226.113:8080/store/store/search/\(paramText)"
+        let url = "http://223.194.77.134:8080/store/store/search/\(paramText)"
         let apiURI: URL! = URL(string: url)
         
         let apidata = try! Data(contentsOf: apiURI)
@@ -49,6 +50,8 @@ class SearchViewController: UITableViewController {
                 mvo.totalCount = r["totalCount"] as? Int
                 mvo.pictureURL = r["pictureURL"] as? String
                 mvo.id = r["id"] as? Int
+                let category = r["category"] as! NSDictionary
+                mvo.categoryID = category["id"] as? Int
                 self.list.append(mvo)
             }
         }catch {
@@ -61,6 +64,7 @@ class SearchViewController: UITableViewController {
     var paramText: String = ""
     // MARK: - Table view data source
     override func viewWillAppear(_ animated: Bool) {
+        self.appDelegate.favoriteslist = self.dao.fetch()
         self.tableView.reloadData()
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -75,7 +79,7 @@ class SearchViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = self.list[indexPath.row]
-        
+
         let cell = tableView.dequeueReusableCell(withIdentifier: "SearchCell", for: indexPath) as! SearchCell
         cell.title.text = row.name
         cell.distance.text = "\(33)m"
@@ -90,6 +94,9 @@ class SearchViewController: UITableViewController {
             let path = self.tableView.indexPath(for: sender as! SearchCell)
             let detailVC = segue.destination as? DetailViewController
             detailVC?.paramID = self.list[path!.row].id
+
+            detailVC?.favoritesSwitch.isOn = false
+
         }
     }
 

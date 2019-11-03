@@ -8,9 +8,11 @@
 
 import UIKit
 
-class HistoryViewController: UITableViewController {
+class HistoryViewController: UITableViewController, UITextFieldDelegate {
     
-    lazy var dao = FavoritesDAO()
+    lazy var dao = HistoryDAO()
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var name: String?
     /*
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,18 +26,34 @@ class HistoryViewController: UITableViewController {
      */
     @IBOutlet var searchTextField: UITextField!
     @IBAction func onSearch(_ sender: UIBarButtonItem) {
+        let data = HistoryData()
+        data.regdate = Date()
+        data.name = self.searchTextField.text!
+        self.name = self.searchTextField.text
+        dao.add(data)
+        // 검색 했으면 검색한 데이터에 추가
         self.performSegue(withIdentifier: "SearchSegue", sender: self)
+        
     }
+    //return 버튼 클릭시
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField.isEqual(self.searchTextField) {
+            onSearch(self.navigationItem.rightBarButtonItem!)
+        }
+        return true
+    }
+
+    // MARK: - Table view data source
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let dest = segue.destination
         guard let rvc = dest as? SearchViewController else {
             return
         }
         
-        rvc.paramText = self.searchTextField.text!
+        rvc.paramText = self.name!
     }
-    // MARK: - Table view data source
     override func viewWillAppear(_ animated: Bool) {
+        self.appDelegate.historylist = self.dao.fetch()
         self.tableView.reloadData()
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -45,16 +63,32 @@ class HistoryViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 5
+        return self.appDelegate.historylist.count
     }
 
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HistoryCell", for: indexPath) as! HistoryCell
-        cell.title.text = ""
+        let row = self.appDelegate.historylist[indexPath.row]
+        cell.title.text = row.name
         // Configure the cell...
 
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        let data = self.appDelegate.historylist[indexPath.row]
+        
+        if dao.delete(data.objectID!) {
+            self.appDelegate.historylist.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+    //table에서 목록을 선택할때
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let row = self.appDelegate.historylist[indexPath.row]
+        self.name = row.name
+        self.performSegue(withIdentifier: "SearchSegue", sender: self)
     }
     
 

@@ -13,8 +13,8 @@ class FavoritesDAO {
     /*
     lazy var list: [NSManagedObject] = {
         return self.fetch()
-    }()
- */
+    }()*/
+ 
     lazy var context: NSManagedObjectContext = {
        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         return appDelegate.persistentContainer.viewContext
@@ -41,7 +41,7 @@ class FavoritesDAO {
                 data.id = Int(record.id)
                 data.count = Int(record.count)
                 data.objectID = record.objectID
-                
+                //이미지가 있을때만
                 if let image = record.image as Data? {
                     data.image = UIImage(data: image)
                 }
@@ -81,10 +81,21 @@ class FavoritesDAO {
             return false
         }
     }
-    
-    func getObjectID(_ favoritesData: FavoritesData) -> NSManagedObjectID? {
+    func isExist(_ id: Int, _ categoryID: Int) -> Bool {
         let fetchRequest: NSFetchRequest<FavoritesMO> = FavoritesMO.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "categoryID == %d && id == %d", favoritesData.categoryID!, favoritesData.id!)
+        fetchRequest.predicate = NSPredicate(format: "categoryID == %d && id == %d", categoryID, id)
+        do{
+            let object = try self.context.fetch(fetchRequest).first!
+            return true
+        } catch let e as NSError {
+            NSLog("An error has occurred : %s", e.localizedDescription)
+            return false
+        }
+
+    }
+    func getObjectID(_ id: Int, _ categoryID: Int) -> NSManagedObjectID? {
+        let fetchRequest: NSFetchRequest<FavoritesMO> = FavoritesMO.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "categoryID == %d && id == %d", categoryID, id)
         do{
             let object = try self.context.fetch(fetchRequest).first!
             return object.objectID
@@ -93,6 +104,19 @@ class FavoritesDAO {
             return nil
         }
     }
+    
+    func getObjectID(_ id: Int) -> NSManagedObjectID? {
+        let fetchRequest: NSFetchRequest<FavoritesMO> = FavoritesMO.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %d", id)
+        do{
+            let object = try self.context.fetch(fetchRequest).first!
+            return object.objectID
+        } catch let e as NSError {
+            NSLog("An error has occurred : %s", e.localizedDescription)
+            return nil
+        }
+    }
+
     
     // 방문시 count 값 1 증가하는 함수
     func addCount(_ objectID: NSManagedObjectID) -> Bool {

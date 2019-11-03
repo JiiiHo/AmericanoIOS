@@ -19,8 +19,8 @@ class DetailVO {
     var address : String?
     var website : String?
     var callNumber : String?
-    var startTime : Date?
-    var endTime : Date?
+    var startTime : String?
+    var endTime : String?
     var closedDay : Bool?
     var running : Bool?
     var pictureURL : String?

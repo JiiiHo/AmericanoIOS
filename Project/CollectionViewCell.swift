@@ -7,12 +7,12 @@
 //
 
 import UIKit
-
+import CoreData
 class CollectionViewCell: UICollectionViewCell {
     @IBOutlet var img: UIImageView!
     @IBOutlet var title: UILabel!
     @IBOutlet var percent: UILabel!
     var id: Int!
     var categoryID: Int!
-    
+    var objectID : NSManagedObjectID?
 }

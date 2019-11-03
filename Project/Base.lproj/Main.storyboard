@@ -92,7 +92,11 @@
                                 <action selector="moveHistory:" destination="R6O-av-ePx" eventType="touchDown" id="ayq-j3-UCP"/>
                             </connections>
                         </textField>
-                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="kOe-gf-K91"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="kOe-gf-K91">
+                            <connections>
+                                <action selector="refreshCollection:" destination="R6O-av-ePx" id="HjQ-dT-L1Y"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <segue destination="Mzu-MX-BmI" kind="show" id="ndP-g8-pcN"/>
@@ -273,6 +277,9 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="2kB-Qk-A6J" kind="show" identifier="FaDetailSegue" id="LWW-BO-w6b"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <sections/>
@@ -285,7 +292,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DFG-A4-zt7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2081" y="655"/>
+            <point key="canvasLocation" x="2081" y="728"/>
         </scene>
         <!--Favorites-->
         <scene sceneID="e1b-SX-Aa8">
@@ -304,7 +311,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fhv-9T-Mcr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1142" y="654"/>
+            <point key="canvasLocation" x="1142" y="727"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="0bC-Uu-tBV">
@@ -323,7 +330,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0yM-me-ZGL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="172" y="293"/>
+            <point key="canvasLocation" x="137" y="331"/>
         </scene>
         <!--상세정보-->
         <scene sceneID="G9r-wt-m9E">
@@ -395,6 +402,9 @@
                                 <state key="normal" title="60%">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
+                                <connections>
+                                    <action selector="touchSetInfo:" destination="2kB-Qk-A6J" eventType="touchUpInside" id="lnY-uD-AOm"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="휴무일" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mgV-Dt-dAz">
                                 <rect key="frame" x="16" y="526" width="45" height="21"/>
@@ -404,22 +414,67 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="영업중" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CUe-Y1-RWd">
-                                <rect key="frame" x="300" y="439" width="45" height="21"/>
+                                <rect key="frame" x="314" y="439" width="45" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FPQ-eR-uLa">
+                                <rect key="frame" x="91" y="438" width="215" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Iz4-fa-Tvq">
+                                <rect key="frame" x="91" y="410" width="268" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="없음" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NoP-dS-yl4">
+                                <rect key="frame" x="91" y="526" width="268" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iIz-dM-WmS">
+                                <rect key="frame" x="91" y="468" width="215" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="onClicktel:" destination="2kB-Qk-A6J" eventType="touchUpInside" id="F4w-c6-BhY"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sEZ-cX-Evb">
+                                <rect key="frame" x="91" y="497" width="268" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="onClickURL:" destination="2kB-Qk-A6J" eventType="touchUpInside" id="aAc-Yz-Myl"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="wl0-uS-yRK"/>
                     </view>
                     <navigationItem key="navigationItem" title="홍대 스타벅스" id="rG1-vz-49X"/>
                     <connections>
+                        <outlet property="address" destination="Iz4-fa-Tvq" id="WfR-kB-9oK"/>
+                        <outlet property="businessDay" destination="NoP-dS-yl4" id="fFk-rL-8wo"/>
                         <outlet property="image" destination="cAt-14-Jje" id="au8-1P-PMl"/>
                         <outlet property="index" destination="jkA-dC-AC3" id="iSb-DY-sTo"/>
+                        <outlet property="isBusiness" destination="CUe-Y1-RWd" id="45d-yK-bks"/>
                         <outlet property="name" destination="Ykv-6N-ryT" id="dfT-Nf-F7j"/>
+                        <outlet property="opentime" destination="FPQ-eR-uLa" id="6Aw-5l-kqb"/>
                         <outlet property="setInfo" destination="jHG-Hb-e54" id="U5c-h6-3Y2"/>
+                        <outlet property="tel" destination="iIz-dM-WmS" id="Q7i-Vr-vWh"/>
+                        <outlet property="url" destination="sEZ-cX-Evb" id="fha-Cg-u45"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tpd-SO-Ec0" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -455,7 +510,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lou-LL-WFC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3670" y="654"/>
+            <point key="canvasLocation" x="3670" y="728"/>
         </scene>
     </scenes>
     <resources>
@@ -463,6 +518,6 @@
         <image name="Star" width="32" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="DAy-HW-z2o"/>
+        <segue reference="atb-3a-X0D"/>
     </inferredMetricsTieBreakers>
 </document>

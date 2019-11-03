@@ -28,6 +28,11 @@ class FavoritesViewController: UITableViewController {
 
     // MARK: - Table view data source
 
+    override func viewWillAppear(_ animated: Bool) {
+        self.appDelegate.favoriteslist = self.dao.fetch()
+        self.tableView.reloadData()
+
+    }
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
@@ -50,11 +55,21 @@ class FavoritesViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         let data = self.appDelegate.favoriteslist[indexPath.row]
         
-        if dao.delete(dao.getObjectID(data)!) {
+        if dao.delete(data.objectID!) {
             self.appDelegate.favoriteslist.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .fade)
         }
         
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "FaDetailSegue" {
+            let path = self.tableView.indexPath(for: sender as! UITableViewCell)
+            let detailVC = segue.destination as? DetailViewController
+            detailVC?.paramID = self.appDelegate.favoriteslist[path!.row].id
+            detailVC?.favoritesSwitch.isOn = true
+            dao.addCount(self.appDelegate.favoriteslist[path!.row].objectID!)
+        }
     }
 
     /*

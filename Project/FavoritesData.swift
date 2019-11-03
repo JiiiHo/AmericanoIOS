@@ -15,4 +15,6 @@ class FavoritesData {
     var image : UIImage? // 이미지
     var count : Int?
     var objectID : NSManagedObjectID?
+    
+
 }
